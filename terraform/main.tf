@@ -34,18 +34,17 @@ resource "google_bigquery_dataset" "dataset" {
 }
 
 
-# Analytic Machine for Spark/Pyspark 
+Analytic Machine for Spark/Pyspark 
 module "dataproc" {
-  source            = "./modules/dataproc"
-  final_project     = var.final_project
-  boot_disk_size_gb = var.boot_disk_size_gb
-  image_version     = var.image_version
-  dataproc_name     = var.dataproc_name
-  account_key       = var.account_key
-  zone              = var.zone
-  # staging_bucket    = var.staging_bucket
-  machine_type      = var.machine_type
-  label             = var.label
-
-
+  source                = "./modules/dataproc"
+  project               = var.project
+  final_project         = var.final_project
+  boot_disk_size_gb     = var.boot_disk_size_gb
+  image_version         = var.image_version
+  dataproc_name         = var.dataproc_name
+  account_key           = var.account_key
+  zone                  = var.zone
+  machine_type          = var.machine_type
+  label                 = var.label
+  service_account_email = var.service_account_email
 }

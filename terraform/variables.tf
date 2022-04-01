@@ -68,3 +68,7 @@ variable "dataproc_name" {
 variable "label" {
 
 }
+
+variable "service_account_email" {
+
+}
