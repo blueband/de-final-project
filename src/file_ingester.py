@@ -24,7 +24,7 @@ def get_current_month(current_month=None, current_year=None):
     elif current_month is None:
         current_month = datetime.now().month
 
-    month_params = '30'+ '_' + current_month + '_' + current_year
+    month_params = '30'+ '_' + str(current_month) + '_' + str(current_year)
     return month_params
 
 
@@ -58,12 +58,12 @@ def search(service, month, year):
     files = all_blobs['files']
     for file in files:
         for k, v in file.items():
-            if month_params not in v:continue
+            if month_params not in v: return False
             else:
                 file_name = file['name']
                 fileID = file['id']
     # print(f'https://drive.google.com/file/d/{fileID}/')
-    return fileID, file_name
+    return (fileID, file_name)
 
 
 
@@ -75,8 +75,8 @@ def downloader(service, fileid, file_name):
     done = False
     while done is False:
         status, done = downloader.next_chunk()
-    # print("Download %d%%.") % int(status.progress() * 100)
-
+        
+    # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
     fh.seek(0)
     with open(file_name, 'wb') as f:
         shutil.copyfileobj(fh, f, length=131072)
@@ -87,12 +87,16 @@ def downloader(service, fileid, file_name):
 
 
 
-def main():
+def main(month=None, year=None):
     service = get_gdrive_service()
     # filetype = "text/plain"
     # search for files that has type of text/plain
-    fileID, file_name = search(service, '09', '2020')
-    downloader(service, fileID, file_name)
+    search_term = search(service, month, year)
+    if search_term:
+        fileID, file_name = search_term[0], search_term[1]
+        downloader(service, fileID, file_name)
+    else:
+        print('File not found')
 
 
 if __name__ == '__main__':
