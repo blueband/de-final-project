@@ -12,6 +12,7 @@ from google.auth.transport.requests import Request
 import io, shutil
 from googleapiclient.http import MediaIoBaseDownload
 
+sub_path = '/opt/airflow/dags/'
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
@@ -24,7 +25,7 @@ def get_current_month(current_month=None, current_year=None):
     elif current_month is None:
         current_month = datetime.now().month
 
-    month_params = '30'+ '_' + str(current_month) + '_' + str(current_year)
+    month_params = '30'+ '_' + str(current_month) + '_' + str(current_year) + '.zip'
     return month_params
 
 
@@ -33,36 +34,38 @@ def get_gdrive_service():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists(sub_path +'token.pickle'):
+        with open(sub_path + 'token.pickle', 'rb') as token:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(sub_path + 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
     # return Google Drive API service
-    return build('drive', 'v3', credentials=creds)
+    return build('drive', 'v3', credentials=creds, cache_discovery=False)
 
 
 def search(service, month, year):
+    temp_container = dict()
     month_params = get_current_month(month, year)
     # service = get_gdrive_service()
     all_blobs = service.files().list().execute()
     files = all_blobs['files']
     for file in files:
-        for k, v in file.items():
-            if month_params not in v: return False
-            else:
-                file_name = file['name']
-                fileID = file['id']
-    # print(f'https://drive.google.com/file/d/{fileID}/')
+        temp_container[file['id']] = file['name']
+    temp_file = list(temp_container.values())
+    if month_params not in temp_file: return False
+    else:
+        for k,v in temp_container.items():
+            if month_params == v:
+                file_name = v
+                fileID = k
     return (fileID, file_name)
 
 
@@ -87,17 +90,13 @@ def downloader(service, fileid, file_name):
 
 
 
-def main(month=None, year=None):
+def download_main(month=None, year=None):
     service = get_gdrive_service()
-    # filetype = "text/plain"
     # search for files that has type of text/plain
     search_term = search(service, month, year)
     if search_term:
         fileID, file_name = search_term[0], search_term[1]
         downloader(service, fileID, file_name)
     else:
-        print('File not found')
+        print('File not found ! Check back in few days')
 
-
-if __name__ == '__main__':
-    main()

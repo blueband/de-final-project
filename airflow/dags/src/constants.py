@@ -16,7 +16,6 @@ OUTPUT_PARTITION = "Output/Active-Attribution/output/"
 ARCHIVE_PARTITION = "Archive/output/"
 
 
-
 sheet_name_list = ['ESG Active-Classical GICS ', 'ESG Active-Total Exposure ', \
                    'ESG Active-ESG Risk Score ','ESG Active-Controversy Sco ', \
                     'ESG Active-CO2 Emissions ', 'ESG Active-Waste Intensity ', \

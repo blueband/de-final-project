@@ -60,20 +60,11 @@ x-airflow-common:
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     GOOGLE_APPLICATION_CREDENTIALS: /.google/credentials/google_credentials.json
     AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT: 'google-cloud-platform://?extra__google_cloud_platform__key_path=/.google/credentials/google_credentials.json'
-<<<<<<< HEAD
-<<<<<<< HEAD
-    GCP_PROJECT_ID: 'dtc-de-course-2022-339213'
-    GCP_GCS_BUCKET: "dtc_data_lake_dtc-de-course-2022-339213"
-=======
+  
 
     # TODO: Please change GCP_PROJECT_ID & GCP_GCS_BUCKET, as per your config
-    GCP_PROJECT_ID: 'pivotal-surfer-336713'
-    GCP_GCS_BUCKET: 'dtc_data_lake_pivotal-surfer-336713'
->>>>>>> main
-=======
     GCP_PROJECT_ID: 'dtc-de-course-2022-339213'
-    GCP_GCS_BUCKET: "dtc_data_lake_dtc-de-course-2022-339213"
->>>>>>> 45049ba0a7ad55aa35e50084a65f24c7dc61c706
+    GCP_GCS_BUCKET: 'de-final-datalake_dtc-de-course-2022-339213'
 
   volumes:
     - ./dags:/opt/airflow/dags
@@ -274,7 +265,7 @@ services:
     <<: *airflow-common
     command: celery flower
     ports:
-      - 5555:5555
+      - 5555
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
       interval: 10s
