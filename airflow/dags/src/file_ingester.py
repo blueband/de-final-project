@@ -6,6 +6,7 @@
 from datetime import datetime
 import pickle
 import os
+import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -27,6 +28,33 @@ def get_current_month(current_month=None, current_year=None):
 
     month_params = '30'+ '_' + str(current_month) + '_' + str(current_year) + '.zip'
     return month_params
+
+def get_file_path(file_name):
+    return os.path.join( os.getcwd(), file_name)
+    
+
+def upload_to_gcs(bucket, object_name, local_file):
+    """
+    Ref: https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-python
+    :param bucket: GCS bucket name
+    :param object_name: target path & file-name
+    :param local_file: source path & file-name
+    :return:
+    """
+    # WORKAROUND to prevent timeout for files > 6 MB on 800 kbps upload speed.
+    # (Ref: https://github.com/googleapis/python-storage/issues/74)
+    storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
+    storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
+    # End of Workaround
+
+    client = storage.Client()
+    bucket = client.bucket(bucket)
+
+    blob = bucket.blob(object_name)
+    blob.upload_from_filename(local_file)
+
+
+
 
 
 def get_gdrive_service():
@@ -87,16 +115,25 @@ def downloader(service, fileid, file_name):
 
 
     print(f'File with name {file_name} download completely')
+    return get_file_path(file_name)
 
 
 
-def download_main(month=None, year=None):
+def download_main(month=None, year=None, **kwargs):
     service = get_gdrive_service()
     # search for files that has type of text/plain
     search_term = search(service, month, year)
     if search_term:
         fileID, file_name = search_term[0], search_term[1]
-        downloader(service, fileID, file_name)
+        file_path = downloader(service, fileID, file_name)
+        # task_instance = kwargs['task_instance']
+        # task_instance.xcom_push(key="file_path", value=file_path)
+        return file_path
     else:
         print('File not found ! Check back in few days')
 
+
+
+def get_file_name(file_path):
+    fileName = file_path.split('/')
+    return fileName[-1]
