@@ -1,12 +1,13 @@
 # Problem 
  Background Descripition:
 
-'These Asset Management Data are made available at end of each month in a compressed file. A single file consists of more than one excel files, and each excel file consists of multiple sheet
+'These dataset is Asset Management Dat made available at end of each month in a compressed file on Google Drive. A single file consists of more than one excel files, and each excel file consists of multiple sheet
 
 # Project Goals
 Generally, the goal is to  design and build data pipeline and equally perform transformation process on the raw data in DL and move transform data into DWH for further processing before presentation. Below are list of trasnformation stage goals in details
 
-1. Extract the given input compress file recursively, and reruieve the folder named "Active_Attribution" 
+1. Ingest file from Google drive monthly, then perform below process on the file
+Extract the given input compress file recursively, and reruieve the folder named "Active_Attribution" 
 2. Perform following on the excel file in the folder named "Active_Attribution"
    1. Filters out across all excel sheets
         ◦ first 6 rows
@@ -72,3 +73,10 @@ Service Account Role/Permission
 # Transformation
 The job is submited to Pyspark
 
+
+# PySpark Job Submission Via Gloud
+To submit job run `./install.sh` on the terminal
+
+
+# Dashboar View
+https://datastudio.google.com/s/s_KLK9FYT8Y

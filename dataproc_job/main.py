@@ -125,11 +125,11 @@ def add_year_month_day_value(Portfolio_Code,Reporting_Date, dataframe):
         # updating row in col19 base current row in col2 on the current sheet
         dataframe = dataframe.withColumn('Portfolio_Code', when(dataframe.Filter_Level_1 == lit(row.Filter_Level_1), \
                    Portfolio_code).otherwise("")) 
-        dataframe = dataframe.withColumn('Year', when(dataframe.Filter_Level_1 == lit(row.Filter_Level_1), \
+        dataframe = dataframe.withColumn('Day', when(dataframe.Filter_Level_1 == lit(row.Filter_Level_1), \
                     Day).otherwise(""))
         dataframe = dataframe.withColumn('Month', when(dataframe.Filter_Level_1 == lit(row.Filter_Level_1), \
                     Month).otherwise(""))
-        dataframe = dataframe.withColumn('Day', when(dataframe.Filter_Level_1 == lit(row.Filter_Level_1),  \
+        dataframe = dataframe.withColumn('Year', when(dataframe.Filter_Level_1 == lit(row.Filter_Level_1),  \
                     Year).otherwise(""))
     return dataframe
 
@@ -201,7 +201,7 @@ def write_parquet_file(dataframe_obj, Portfolio_Code):
     # Partition based Year=?Month=?Day?Portfolio_code=? 
     print('****** Initialize writing Dataframe to parquet format *******************')
     # Portfolio_code = Portfolio_Code.values()[0]
-    dataframe_obj.write.mode("append").partitionBy('Year', 'Month', 'Day', 'Portfolio_code').parquet(f'gs://{GCS_BUCKET}/Output/Active-Attribution/final-parquet')
+    dataframe_obj.write.mode("append").partitionBy('Day', 'Month', 'Year', 'Portfolio_code').parquet(f'gs://{GCS_BUCKET}/Output/final-parquet-data')
 
     print('***** Completed writing Dataframe to parquet format *******************')
 
