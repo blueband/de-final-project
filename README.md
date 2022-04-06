@@ -79,4 +79,4 @@ To submit job run `./install.sh` on the terminal
 
 
 # Dashboard View
-https://datastudio.google.com/s/s_KLK9FYT8Y
+https://datastudio.google.com/reporting/6c9a0897-7552-4e2d-ba82-5be6fbae2136
